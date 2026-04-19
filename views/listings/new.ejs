@@ -1,0 +1,95 @@
+<% layout('/layouts/boilerplate') -%>
+<body>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <br>
+            <h3>Create New Listing</h3>
+
+    <form 
+      method="post" 
+      action="/listings" 
+      novalidate class="needs-validation" 
+      enctype="multipart/form-data"
+    >
+
+        <div class="mb-3">
+            <label class="form-label">Title:</label>
+            <input type="text" placeholder="Add a catchy title" class="form-control" name="listing[title]" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description:</label>
+            <textarea class="form-control" name="listing[description]" id="description" required></textarea>
+
+            <!-- 🔥 AI BUTTON -->
+            <div class="mt-2 d-flex gap-2">
+                <button type="button" onclick="generateAI()" class="btn btn-outline-primary btn-sm">
+                    ✨ Generate with AI
+                </button>
+
+                <!-- optional toggle -->
+                <label class="form-check-label">
+                    <input type="checkbox" name="useAI" value="true" class="form-check-input">
+                    Auto AI
+                </label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Upload Image:</label>
+            <input type="file" name="listing[image][url]" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price:</label>
+            <input type="number" name="listing[price]" placeholder="1200" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Location:</label>
+            <input type="text" name="listing[location]" placeholder="Jaipur, Rajasthan" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Country:</label>
+            <input name="listing[country]" type="text" placeholder="India" required class="form-control">
+        </div>
+
+        <br>
+
+        <button class="btn btn-dark w-100">Create Listing</button>
+    </form>
+    </div>
+    </div>
+
+<!-- 🔥 SCRIPT -->
+<script>
+async function generateAI() {
+    const title = document.querySelector("input[name='listing[title]']").value;
+    const location = document.querySelector("input[name='listing[location]']").value;
+
+    if (!title || !location) {
+        alert("Please fill Title and Location first!");
+        return;
+    }
+
+    try {
+        const res = await fetch("/ai-description", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ title, location })
+        });
+
+        const data = await res.json();
+
+        document.getElementById("description").value = data.description;
+    } catch (err) {
+        alert("AI failed 😢");
+        console.log(err);
+    }
+}
+</script>
+
+</body>
